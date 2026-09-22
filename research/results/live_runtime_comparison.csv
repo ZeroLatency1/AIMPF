@@ -1,0 +1,6 @@
+strategy,cost,cost_reduction_vs_full_suite,uncertainty_reduction
+AIMPF adaptive,3.70,0.637,0.536
+Uncertainty-only baseline,4.70,0.539,0.587
+Cheapest-first baseline,5.70,0.441,0.598
+Full-suite baseline,10.20,0.000,0.646
+Exact minimum-cost oracle,3.70,0.637,0.536

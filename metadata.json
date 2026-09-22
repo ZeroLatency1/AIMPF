@@ -1,0 +1,13 @@
+{
+  "name": "AIMPF — AI Impact and Maintainability Prediction Framework",
+  "description": "Local FastAPI/PostgreSQL framework for explainable AI-system change-impact prediction and adaptive counterfactual validation.",
+  "majorCapabilities": [
+    "weighted-ai-dependency-graph",
+    "behavior-conditioned-impact-prediction",
+    "adaptive-counterfactual-validation",
+    "residual-based-calibration",
+    "versioned-evaluation-and-rag-scoring",
+    "research-experiment-comparison",
+    "pdf-reporting"
+  ]
+}

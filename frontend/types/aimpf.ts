@@ -1,0 +1,2 @@
+export type Project={id:number;name:string;description:string|null;aimi:number|null;components:number;dependencies:number}
+export type ChangeAnalysis={id:number;overall_impact:number;risk:string;confidence:number;estimated_hours_min:number;estimated_hours_max:number;fingerprint:Record<string,number>;predictions:Record<string,number>;validation:{selected:string[];reasons:Record<string,string>;uncertainty_before:number;uncertainty_after:number}}

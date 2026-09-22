@@ -1,0 +1,6 @@
+scenario,change_type,component_id,risk,overall_impact,prediction_confidence,selected_tests,selected_count,full_suite_count,adaptive_cost,full_suite_cost,cost_reduction,uncertainty_before,uncertainty_after,expected_uncertainty_reduction
+knowledge_update_repo,KNOWLEDGE_UPDATE,1,MEDIUM,0.560806,0.443679,retrieval_recall|hallucination_evaluation|accuracy_evaluation,3,10,3.7,10.2,0.637255,0.556321,0.257566,0.537019
+knowledge_update_rag,KNOWLEDGE_UPDATE,3,HIGH,0.725749,0.471232,retrieval_recall|hallucination_evaluation|accuracy_evaluation,3,10,3.7,10.2,0.637255,0.528768,0.244901,0.536846
+prompt_change,PROMPT_CHANGE,5,MEDIUM,0.520956,0.432287,prompt_regression|safety_evaluation|hallucination_evaluation|accuracy_evaluation,4,10,4.3,10.2,0.578431,0.567713,0.262169,0.538201
+model_change,MODEL_CHANGE,4,MEDIUM,0.622073,0.446756,prompt_regression|latency_evaluation|hallucination_evaluation|accuracy_evaluation,4,10,4.1,10.2,0.598039,0.553244,0.283359,0.487822
+configuration_change,CONFIGURATION_CHANGE,4,MEDIUM,0.503236,0.41918,prompt_regression|latency_evaluation|retrieval_recall,3,10,2.8,10.2,0.72549,0.58082,0.299882,0.483692
