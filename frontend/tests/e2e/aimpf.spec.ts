@@ -1,4 +1,3 @@
-```ts
 import { test, expect } from '@playwright/test';
 
 const project = {
@@ -190,4 +189,4 @@ test('experiment workspace renders comparison controls', async ({ page }) => {
 
   await expect(page.getByText('Run baseline comparison')).toBeVisible();
 });
-```
+
