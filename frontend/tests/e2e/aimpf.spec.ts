@@ -31,6 +31,7 @@ async function mockApi(page: Page): Promise<void> {
     const path = url.pathname.replace(/\/+$/, '');
     const method = route.request().method();
 
+    // Health check
     if (path === '/api/health') {
       return route.fulfill({
         status: 200,
@@ -38,14 +39,23 @@ async function mockApi(page: Page): Promise<void> {
       });
     }
 
+    // Projects
     if (path === '/api/projects' && method === 'GET') {
-      return route.fulfill({ status: 200, json: [project] });
+      return route.fulfill({
+        status: 200,
+        json: [project],
+      });
     }
 
+    // Project components
     if (path === '/api/projects/1/components') {
-      return route.fulfill({ status: 200, json: components });
+      return route.fulfill({
+        status: 200,
+        json: components,
+      });
     }
 
+    // Project dashboard
     if (path === '/api/projects/1/dashboard') {
       return route.fulfill({
         status: 200,
@@ -68,6 +78,7 @@ async function mockApi(page: Page): Promise<void> {
       });
     }
 
+    // Project metrics
     if (path === '/api/projects/1/metrics') {
       return route.fulfill({
         status: 200,
@@ -78,6 +89,7 @@ async function mockApi(page: Page): Promise<void> {
       });
     }
 
+    // Dependency graph
     if (path === '/api/projects/1/graph') {
       return route.fulfill({
         status: 200,
@@ -91,6 +103,7 @@ async function mockApi(page: Page): Promise<void> {
       });
     }
 
+    // Recommendations
     if (path === '/api/projects/1/recommendations') {
       return route.fulfill({
         status: 200,
@@ -105,6 +118,18 @@ async function mockApi(page: Page): Promise<void> {
       });
     }
 
+    // FIX: Changes must return a list, not the default empty object.
+    if (
+      path === '/api/projects/1/changes' &&
+      method === 'GET'
+    ) {
+      return route.fulfill({
+        status: 200,
+        json: [],
+      });
+    }
+
+    // Adaptive validation tests
     if (path === '/api/validation/tests') {
       return route.fulfill({
         status: 200,
@@ -113,22 +138,41 @@ async function mockApi(page: Page): Promise<void> {
       });
     }
 
+    // Project validation results
     if (path === '/api/projects/1/validation') {
       return route.fulfill({
         status: 200,
-        json: { results: [], calibration: [] },
+        json: {
+          results: [],
+          calibration: [],
+        },
       });
     }
 
+    // Evaluations
     if (
       path === '/api/projects/1/evaluations' ||
-      path === '/api/projects/1/evaluations/summary' ||
-      path === '/api/projects/1/experiments'
+      path === '/api/projects/1/evaluations/summary'
     ) {
-      return route.fulfill({ status: 200, json: [] });
+      return route.fulfill({
+        status: 200,
+        json: [],
+      });
     }
 
-    return route.fulfill({ status: 200, json: {} });
+    // Experiments
+    if (path === '/api/projects/1/experiments') {
+      return route.fulfill({
+        status: 200,
+        json: [],
+      });
+    }
+
+    // Catch-all for other endpoints used by these UI smoke tests.
+    return route.fulfill({
+      status: 200,
+      json: {},
+    });
   });
 }
 
@@ -137,7 +181,10 @@ test('home renders the core workflow', async ({ page }) => {
   await page.goto('/');
 
   await expect(
-    page.getByRole('link', { name: 'AIMPF', exact: true })
+    page.getByRole('link', {
+      name: 'AIMPF',
+      exact: true,
+    })
   ).toBeVisible();
 
   await expect(
@@ -171,79 +218,31 @@ test('validation workspace renders adaptive test selector', async ({
   page,
 }) => {
   await mockApi(page);
-
-  const requests: string[] = [];
-  const responses: Promise<string>[] = [];
-
-  page.on('request', (request) => {
-    if (request.url().includes('/api/')) {
-      requests.push(`${request.method()} ${request.url()}`);
-    }
-  });
-
-  page.on('response', (response) => {
-    if (response.url().includes('/api/')) {
-      responses.push(
-        (async () => {
-          try {
-            return [
-              response.status(),
-              response.url(),
-              await response.text(),
-            ].join(' | ');
-          } catch {
-            return `${response.status()} | ${response.url()} | body unavailable`;
-          }
-        })()
-      );
-    }
-  });
-
   await page.goto('/validation');
 
   await expect(
     page.getByText('Adaptive Counterfactual Validation')
   ).toBeVisible();
 
-  await page.waitForTimeout(500);
-
-  const selectElements = await page.locator('select').evaluateAll(
-    (elements) =>
-      elements.map((element) => ({
-        tag: element.tagName,
-        text: element.textContent,
-        html: element.innerHTML,
-      }))
-  );
-
-  console.log('[API REQUESTS]', JSON.stringify(requests, null, 2));
-  console.log(
-    '[API RESPONSES]',
-    JSON.stringify(await Promise.all(responses), null, 2)
-  );
-  console.log(
-    '[SELECT ELEMENTS]',
-    JSON.stringify(selectElements, null, 2)
-  );
-  console.log(
-    '[SELECT OPTIONS]',
-    JSON.stringify(await page.locator('select option').allTextContents())
-  );
-  console.log(
-    '[PAGE TEXT]',
-    await page.locator('body').innerText()
-  );
-
-  // Temporary diagnostic: inspect the output before restoring the
-  // assertion for retrieval_recall.
+  await expect(
+    page.getByRole('option', {
+      name: 'retrieval_recall',
+      exact: true,
+    })
+  ).toHaveCount(1);
 });
 
 test('evaluation workspace renders RAG evaluator', async ({ page }) => {
   await mockApi(page);
   await page.goto('/evaluations');
 
-  await expect(page.getByText('Offline RAG evaluator')).toBeVisible();
-  await expect(page.getByText('Evaluate RAG')).toBeVisible();
+  await expect(
+    page.getByText('Offline RAG evaluator')
+  ).toBeVisible();
+
+  await expect(
+    page.getByText('Evaluate RAG')
+  ).toBeVisible();
 });
 
 test('experiment workspace renders comparison controls', async ({
@@ -252,5 +251,7 @@ test('experiment workspace renders comparison controls', async ({
   await mockApi(page);
   await page.goto('/experiments');
 
-  await expect(page.getByText('Run baseline comparison')).toBeVisible();
+  await expect(
+    page.getByText('Run baseline comparison')
+  ).toBeVisible();
 });
