@@ -7,7 +7,12 @@ function mockApi(page:any){return page.route('http://127.0.0.1:8000/api/**',asyn
 test('home renders the core workflow',async({page})=>{await mockApi(page);await page.goto('/');await expect(
   page.getByRole('link', { name: 'AIMPF', exact: true })
 ).toBeVisible();await expect(page.getByText(/Adaptive Counterfactual Validation/)).toBeVisible()})
-test('projects workspace renders project cards',async({page})=>{await mockApi(page);await page.goto('/projects');await expect(page.getByText('Customer Support AI')).toBeVisible();await expect(page.getByText('Dashboard')).toBeVisible()})
+test('projects workspace renders project cards',async({page})=>{await mockApi(page);await page.goto('/projects');await expect(
+  page.getByRole('heading', {
+    name: 'Customer Support AI',
+    exact: true,
+  })
+).toBeVisible();await expect(page.getByText('Dashboard')).toBeVisible()})
 test('change workspace is project-aware',async({page})=>{await mockApi(page);await page.goto('/changes');await expect(page.getByText('Simulate Change')).toBeVisible();await expect(page.getByText('Analyze impact')).toBeVisible()})
 test('validation workspace renders adaptive test selector',async({page})=>{await mockApi(page);await page.goto('/validation');await expect(page.getByText('Adaptive Counterfactual Validation')).toBeVisible();await expect(page.getByText('retrieval_recall')).toBeVisible()})
 test('evaluation workspace renders RAG evaluator',async({page})=>{await mockApi(page);await page.goto('/evaluations');await expect(page.getByText('Offline RAG evaluator')).toBeVisible();await expect(page.getByText('Evaluate RAG')).toBeVisible()})
